@@ -22,19 +22,20 @@ df["diff"] = df["timestamp"].diff().fillna(pd.Timedelta(seconds=0))
 df["diff"] = df["diff"].where(df["activity"] == 0, pd.Timedelta(seconds=0))
 duree_totale = df["diff"].sum()
 
-print("## Nombre de cycles : ", cycles)
-print("## Durée totale de fonctionnement : ", duree_totale)
+print("Nombre de cycles : ", cycles)
+print("Durée totale de fonctionnement : ", duree_totale)
 
 diff = df[df["activity"] == 0]
-df["hour"] = df["timestamp"].dt.hour
-df["hour"] = df["hour"].astype(str)
-df = df[df["activity"] == 1]
-df = df.sort_values(by="hour")
-df = df.drop(columns=["diff"])
-df['hour'] = df['timestamp'].dt.hour
-result = df.groupby('hour')['activity'].count()
+print("Durée moyenne d'un cycle : ", diff["diff"].mean())
 
-print("## Durée moyenne d'un cycle : ", diff["diff"].mean())
-print("## Nombre de cycles par heure :")
-result.plot(kind="bar")
+df["hour"] = df["timestamp"].dt.hour
+df["day"] = df["timestamp"].dt.day
+
+df2 = df.groupby(["day", "hour"]).count()
+df2 = df2["activity"]
+df2 = df2.reset_index()
+df2 = df2["activity"].groupby(df2["hour"]).mean()
+df2.plot(kind="bar", title="Moyenne d'activité par heure", xlabel="Heure", ylabel="Nombre de cycles", color="blue", alpha=0.5)
+for i in df2.index:
+    plt.text(i, df2[i], str(round(df2[i], 2)), ha="center", va="bottom")
 plt.show()
