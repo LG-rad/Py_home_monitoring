@@ -1,61 +1,59 @@
-# FTP Data Analysis Script
+# Dash FTP Data Visualization App
 
-## Overview
+This Dash web application connects to an FTP server, retrieves CSV data, and visualizes the data in graphs.
 
-This Python script connects to an FTP server, retrieves a CSV file, and performs data analysis on the downloaded dataset. The analysis includes calculating the number of cycles, total operational time, average cycle duration, and generating a bar chart showing the average activity per hour.
+## Table of Contents
 
-## Requirements
+- [Installation](#installation)
+- [Usage](#usage)
+- [Dependencies](#dependencies)
+- [File Structure](#file-structure)
+- [Configuration](#configuration)
+- [License](#license)
 
-- Python 3.x
-- pandas
-- matplotlib
-- ftplib
-
-## Setup
+## Installation
 
 1. Clone the repository:
 
-```
-git clone https://github.com/LG-rad/Py_home_monitoring.git
+   ```bash
+   git clone https://github.com/yourusername/your-dash-app.git
+   cd your-dash-app
+   ```
 
-cd Py_home_monitoring
-```
-
-1. Install the required dependencies:
-
-```
-pip install pandas matplotlib
-```
-
-3. Update FTP and file information:
-
-Open `lib/info.py` and replace the placeholder values in the `infos` dictionary with your actual FTP server details and file information.
+2. Install the required dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 ## Usage
 
-Run the script by executing the following command:
+Run the following command to start the Dash web application:
 
-```
-python main.py
-```
-
-The script will download the CSV file from the FTP server, perform the analysis, and display the results in the console. Additionally, a bar chart will be generated and displayed.
-
-## Example Results
-```
-- Number of cycles: 1000
-- Total operational time: 172:12:36
-- Average cycle duration: 00:04:36
+```bash
+python app.py
 ```
 
-## Visualization
+The application will be accessible at `http://127.0.0.1:8050/` by default.
 
-The bar chart displays the average activity per hour. Each bar represents an hour, and the height of the bar indicates the average number of cycles during that hour.
+## Dependencies
 
-[Include a link or path to your generated chart image]
+- Dash
+- Dash DAQ
+- Pandas
+- Other dependencies mentioned in `requirements.txt`
 
-## Notes
+## File Structure
 
-- [Any additional information or notes about the script]
+- `app.py`: Main application file containing the Dash app and callbacks.
+- `common/ftp.py`: Module for FTP connection functionality.
+- `infos.py`: Module containing information about sensors.
+- `requirements.txt`: List of Python dependencies.
 
-Feel free to reach out if you have any questions or encounter issues.
+## Configuration
+
+- Update FTP server, username, and password in the FTP connection window of the app.
+- Customize sensor information in the `infos.py` file.
+
+## License
+
+This project is licensed under the MIT License - see the `LICENSE` file for details.
