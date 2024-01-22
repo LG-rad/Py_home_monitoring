@@ -6,13 +6,6 @@ from common.ftp import FTP
 from infos import capteur
 import pandas as pd
 
-theme = {
-    'dark': True,
-    'detail': '#007439',
-    'primary': '#00EA64',
-    'secondary': '#6E6E6E',
-}
-
 app = dash.Dash(__name__)
 
 # Layout for the FTP connection window

@@ -4,20 +4,22 @@ This Dash web application connects to an FTP server, retrieves CSV data, and vis
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Dependencies](#dependencies)
-- [File Structure](#file-structure)
-- [Configuration](#configuration)
-- [License](#license)
+- [Dash FTP Data Visualization App](#dash-ftp-data-visualization-app)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Dependencies](#dependencies)
+  - [File Structure](#file-structure)
+  - [Configuration](#configuration)
+  - [License](#license)
 
 ## Installation
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/your-dash-app.git
-   cd your-dash-app
+   git clone https://github.com/LG-rad/Py_home_monitoring
+   cd Py_home_monitoring
    ```
 
 2. Install the required dependencies:
