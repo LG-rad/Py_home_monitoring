@@ -4,10 +4,6 @@ import pandas as pd
 from lib.info import infos
 import matplotlib.pyplot as plt
 
-# folder lib/ must exist
-if not os.path.exists('lib/'):
-    os.makedirs('lib/')
-
 ftp = ftplib.FTP(infos["ip"])
 ftp.login(infos["user"], infos["mdp"])
 with open('lib/' + infos["file_id"], 'wb') as f:
@@ -22,11 +18,11 @@ df["diff"] = df["timestamp"].diff().fillna(pd.Timedelta(seconds=0))
 df["diff"] = df["diff"].where(df["activity"] == 0, pd.Timedelta(seconds=0))
 duree_totale = df["diff"].sum()
 
-print("Nombre de cycles : ", cycles)
-print("Durée totale de fonctionnement : ", duree_totale)
+print("- Number of cycles:", cycles)
+print("- Total operation time:", duree_totale.strftime("%H:%M:%S"))
 
 diff = df[df["activity"] == 0]
-print("Durée moyenne d'un cycle : ", diff["diff"].mean())
+print("- Average cycle duration: ", diff["diff"].mean().strftime("%H:%M:%S"))
 
 df["hour"] = df["timestamp"].dt.hour
 df["day"] = df["timestamp"].dt.day
