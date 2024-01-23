@@ -16,9 +16,9 @@ This Python script connects to an FTP server, retrieves a CSV file, and performs
 1. Clone the repository:
 
 ```
-git clone https://github.com/your-username/your-repository.git
+git clone https://github.com/LG-rad/Py_home_monitoring.git
 
-cd your-repository
+cd Py_home_monitoring
 ```
 
 1. Install the required dependencies:
@@ -36,7 +36,7 @@ Open `lib/info.py` and replace the placeholder values in the `infos` dictionary 
 Run the script by executing the following command:
 
 ```
-python your_script_name.py
+python main.py
 ```
 
 The script will download the CSV file from the FTP server, perform the analysis, and display the results in the console. Additionally, a bar chart will be generated and displayed.

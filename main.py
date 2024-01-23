@@ -1,15 +1,19 @@
 import os
 import ftplib
 import pandas as pd
-from lib.info import infos
+from secret.info import infos
 import matplotlib.pyplot as plt
+
+# create a folder for the output
+if not os.path.exists("output"):
+    os.makedirs("output")
 
 ftp = ftplib.FTP(infos["ip"])
 ftp.login(infos["user"], infos["mdp"])
-with open('lib/' + infos["file_id"], 'wb') as f:
+with open('output/' + infos["file_id"], 'wb') as f:
     ftp.retrbinary('RETR ' + "/Disque dur/Domotique/Chaudiere/" + infos["file_id"], f.write)
 ftp.quit()
-df = pd.read_csv('lib/' + infos["file_id"])
+df = pd.read_csv('output/' + infos["file_id"])
 
 cycles = df["activity"].sum()
 df["timestamp"] = pd.to_datetime(df["time"], format="%Y-%m-%d %H:%M:%S")
