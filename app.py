@@ -6,7 +6,9 @@ from common.ftp import FTP
 from infos import capteur
 import pandas as pd
 
-app = dash.Dash(__name__)
+stylesheets = ['common/styles.css']
+
+app = dash.Dash(__name__, external_stylesheets=stylesheets)
 
 # Layout for the FTP connection window
 ftp_layout = html.Div(
@@ -21,13 +23,7 @@ ftp_layout = html.Div(
             html.Button('Connect', id='ftp-connect-button'),
             html.Div(id='ftp-status', children='Not connected yet')
     ],
-    style={
-        'backgroundColor': 'lightgrey',
-        'border': 'thin lightgrey solid',
-        'border-radius': '5px',
-        'padding': '5px',
-        'marginTop': '10px',
-    }
+    id='ftp-layout'
 )
 
 # Layout for the graph display window
@@ -68,6 +64,10 @@ data_layout = html.Div(
         dcc.Graph(id='graph-display'),html.Br(),
         html.H2("Activity per day"),html.Br(),
         dcc.Graph(id='graph-display2'),html.Br(),
+        html.H2("Usage per day"),html.Br(),
+        dcc.Graph(id='graph-usage'),html.Br(),  # Graph for usage per day
+        html.H2("Usage per week"),html.Br(),
+        dcc.Graph(id='graph-usage-week'),html.Br(),  # New graph for usage per week
         html.Div(id='graph-status')
     ],
     style={
@@ -79,15 +79,19 @@ data_layout = html.Div(
     }
 )
 
-# Connect to FTP server and retrieve CSV data
+# Callback to connect to FTP and update graphs
 @app.callback(
-    [Output('ftp-status', 'children'),
-     Output('graph-display', 'figure'),
-     Output('graph-display2', 'figure'),
-     Output('time-display', 'children'),
-     Output('our-LED-display', 'value'),
-     Output('time-average-display', 'children'),
-     Output('graph-status', 'children')],
+    [
+        Output('ftp-status', 'children'),
+        Output('graph-display', 'figure'),
+        Output('graph-display2', 'figure'),
+        Output('time-display', 'children'),
+        Output('our-LED-display', 'value'),
+        Output('time-average-display', 'children'),
+        Output('graph-usage', 'figure'),
+        Output('graph-usage-week', 'figure'),
+        Output('graph-status', 'children')
+    ],
     [Input('ftp-connect-button', 'n_clicks')],
     [State('ftp-server-input', 'value'),
      State('ftp-username-input', 'value'),
@@ -95,7 +99,7 @@ data_layout = html.Div(
 )
 def connect_to_ftp(n_clicks, server, username, password):
     if n_clicks is None:
-        return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+        return dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
 
     try:
         # Establish FTP connection
@@ -157,7 +161,7 @@ def connect_to_ftp(n_clicks, server, username, password):
         df2 = df2.reset_index()
         df2 = df2["activity"].groupby(df2["hour"]).mean()
 
-        # Plot graph
+        # Plot graph for average activity per hour
         fig = {
             'data': [
                 {'x': df2.index, 'y': df2, 'type': 'bar', 'name': 'Average activity per hour'},
@@ -174,9 +178,52 @@ def connect_to_ftp(n_clicks, server, username, password):
             },
         }
 
-        return f"Connected to {server}", fig, fig2, time, value, time_average, ''
+        # Calculate usage per day
+        df['date'] = df['timestamp'].dt.date
+        usage_per_day = df.groupby('date')['diff'].sum().dt.total_seconds() / 3600
+
+        # Plot graph for usage per day
+        fig_usage = {
+            'data': [
+                {'x': usage_per_day.index, 'y': usage_per_day.values, 'type': 'bar', 'name': 'Usage per day'},
+            ],
+            'layout': {
+                'xaxis': {
+                    'title': 'Day'
+                },
+                'yaxis': {
+                    'title': 'Usage (hours)'
+                },
+                'plot_bgcolor': 'lightgrey',
+                'paper_bgcolor': 'lightgrey'
+            },
+        }
+
+        # Calculate usage per week
+        df['week'] = df['timestamp'].dt.strftime('%Y-%U')
+        usage_per_week = df.groupby('week')['diff'].sum().dt.total_seconds() / 3600
+
+        # Plot graph for usage per week
+        fig_usage_week = {
+            'data': [
+                {'x': usage_per_week.index, 'y': usage_per_week.values, 'type': 'bar', 'name': 'Usage per week'},
+            ],
+            'layout': {
+                'xaxis': {
+                    'title': 'Week'
+                },
+                'yaxis': {
+                    'title': 'Usage (hours)'
+                },
+                'plot_bgcolor': 'lightgrey',
+                'paper_bgcolor': 'lightgrey'
+            },
+        }
+
+        return f"Connected to {server}", fig, fig2, time, value, time_average, fig_usage, fig_usage_week, ''
     except Exception as e:
-        return f"Error: {str(e)}", dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+        return f"Error: {str(e)}", dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update, dash.no_update
+
 
 # Define the app layout using the FTP and graph layouts
 app.layout = html.Div(
@@ -186,13 +233,7 @@ app.layout = html.Div(
         dcc.Tab(label='Data Display', children=[data_layout]),
     ])
     ],
-    style={
-        'width': '100%',
-        'height': '100%',
-        'margin': '0 auto',
-        'backgroundColor': 'lightgrey',
-        'border': 'thin lightgrey solid'
-    }
+    id='main-layout'
 )
 
 if __name__ == '__main__':
